@@ -13,6 +13,7 @@ import shutil
 #                   and create a .jar file in a new/pre-existing directory called build 
 # --archive         this will create a zip file of the src directory 
 # --clean           this will delete the build directory and all contents inside of it 
+# --run             this will run the jar file stored in build/
 #
 #        languages supported 
 # --kotlin          builds the src directory for kotlin using the kotlin compiler
@@ -60,6 +61,8 @@ def main(argv):
             clean()
         elif argv[0] == "--create": # create a project structure 
             create()
+        elif argv[0] == "--run":
+            run_build()
     except IndexError:
         print_update("No valid flags",2)
 
@@ -204,6 +207,20 @@ def create():
     os.mkdir('build')
     os.mkdir('src')
     os.mkdir('archive')
+    
+
+# run the build that is stored in the build directory 
+def run_build():
+    os.system("cd build")
+    files = os.listdir()
+    current = ""
+    for i in range(len(files)):
+        current = files[i]
+        if current[-4:] == ".jar":
+            jar_to_run = current
+            break
+    os.system("java -jar {0}".format(jar_to_run))
+    os.system("cd ./..") # go back up to the main level 
     
 
     
