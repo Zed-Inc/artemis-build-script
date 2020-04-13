@@ -76,6 +76,7 @@ def main(argv):
 def build(build_language):
     all_files = os.listdir()
     files_to_build = []
+    os.system("cd src/") # cd into the src directory 
     print_update("Building all kotlin files",5)
     # check if the language specified is kotlin 
     if build_language != "--kotlin":
@@ -111,7 +112,6 @@ def build(build_language):
 
 
 def generate_compile_command(all_file_names):
-    global files_compiled
     compile_command = "kotlinc " # the default compile command
     final_section = "-include-runtime -d " + output_jar_name
     final = ""
@@ -127,6 +127,7 @@ def generate_compile_command(all_file_names):
     os.system(final)
     # shift the generated .jar to the build directory 
     shutil.move(current_path + "/"+output_jar_name,current_path+"/build/")
+    os.system("cd ./..") # shift back up to the main directory 
     
 
 
