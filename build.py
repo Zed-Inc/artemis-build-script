@@ -53,8 +53,8 @@ def check_jar(args):
 def main(argv):        
     try:
         if argv[0] == "--build":
-            check_jar(argv)
-            build(argv[1])
+            check_jar(argv) # check if there was an output name specified 
+            build(argv[1]) # pass in the language specified 
         elif argv[0] == "--help": # check for help 
             help()
         elif argv[0] == "--clean": # call the clean function 
@@ -118,7 +118,7 @@ def generate_compile_command(all_file_names):
     # llop through all the file names and append the file to the end 
     # of the compile command string
     for i in range(len(all_file_names)):
-        print(print_update(str(all_file_names[i]),1))
+        print_update(str(all_file_names[i]),1)
         compile_command = compile_command + all_file_names[i] + " "
         files_compiled += 1
 
@@ -187,6 +187,7 @@ def help():
     print(help_words)
 
 
+# clean the build directory 
 def clean():
     files = os.listdir()
     jar_to_clean = ""
@@ -203,7 +204,7 @@ def clean():
     print_update("build was cleaned, removed {0}".format(jar_to_clean),6)
     os.system("cd ./..") # shift back up 
     
-
+# create a couple of directories for the 
 def create():
     os.mkdir('build')
     os.mkdir('src')
