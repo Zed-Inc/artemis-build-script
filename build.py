@@ -56,6 +56,8 @@ def main(argv):
             help()
         elif argv[0] == "--clean": # call the clean function 
             clean()
+        elif argv[0] == "--create": # create a project structure 
+            create()
     except IndexError:
         print_update("No valid flags",2)
 
@@ -161,7 +163,8 @@ def help():
     --build         use this flag to build the src/ directory 
     --help          run this flag by itself to get access to this menu 
     --archive       create a copy of the src/ directory and zip it up stores it in another directory called archive/
-    --clean         delete the build directory 
+    --clean         cleans the build in the build directory 
+    --create        creates a project structure that is a build and src directory and a readme.md
 
     OUTPUT FLAGS
     --output=       define the name of the output jar file, if this option is not specified  
@@ -195,7 +198,8 @@ def clean():
     os.system("cd ./..") # shift back up 
     
 
-    
+def create():
+    os.mkdir('build','src','archive','README.md')
     
 
     
