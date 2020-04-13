@@ -201,7 +201,9 @@ def clean():
     
 
 def create():
-    os.mkdir('build','src','archive','README.md')
+    os.mkdir('build')
+    os.mkdir('src')
+    os.mkdir('archive')
     
 
     
