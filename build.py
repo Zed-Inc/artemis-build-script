@@ -1,5 +1,6 @@
 import os 
 import sys
+import shutil 
 
 # The goal of this build script is to create a simple process to
 # build files for a language at the moment this language is kotlin
@@ -53,7 +54,8 @@ def main(argv):
             build(argv[1])
         elif argv[0] == "--help": # check for help 
             help()
-
+        elif argv[0] == "--clean": # call the clean function 
+            clean()
     except IndexError:
         print_update("No valid flags",2)
 
@@ -95,6 +97,7 @@ def build(build_language):
         print_update("There are no kotlin files to build",2)
     else:
         generate_compile_command(files_to_build)
+
 #---------------------       END OF METHOD        ------------------------------------
 
 
@@ -115,6 +118,9 @@ def generate_compile_command(all_file_names):
     final = compile_command + final_section
     print("generated compile command: ",final)
     os.system(final)
+    # shift the generated .jar to the build directory 
+    shutil.move(current_path + "/"+output_jar_name,current_path+"/build/")
+    
 
 
 #---------------------       END OF METHOD        ------------------------------------
@@ -132,6 +138,8 @@ def print_update(prompt, update_type):
         print("[INFO]     :     ",prompt) # print info about the compile 
     elif update_type == 5:
         print("[BUILD]    :     ",prompt)
+    elif update_type == 6:
+        print("[CLEAN]    :     ",prompt)
 #---------------------       END OF METHOD        ------------------------------------
 
 
@@ -146,7 +154,7 @@ def help():
                                                     
                                                     
     USAGE
-    artemis {FLAGS} {LANGUAGE} {OUTPUT}
+    artemis [FLAG] [LANGUAGE] [OUTPUT]
     artemis --build --kotlin --output=menu
 
     FLAGS
@@ -170,6 +178,27 @@ def help():
     print(help_words)
 
 
+def clean():
+    files = os.listdir()
+    jar_to_clean = ""
+    current = ""
+    os.system("cd build/") # this will move the current execution path to the build directory 
+    for i in range(len(files)):
+        current = files[i]
+        if current[-4:] == ".jar":
+            jar_to_clean = current
+            break
+
+    print("jar to clean ", jar_to_clean)
+    os.system("rm "+jar_to_clean)
+    print_update("build was cleaned, removed {0}".format(jar_to_clean),6)
+    os.system("cd ./..") # shift back up 
+    
+
+    
+    
+
+    
 
 # enter the main method 
 if __name__ == "__main__":
