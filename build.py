@@ -1,8 +1,8 @@
-#!/usr/bin/python3
-
+#!/usr/local/bin/python3
 import os 
 import sys
 import shutil 
+
 
 # The goal of this build script is to create a simple process to
 # build files for a language at the moment this language is kotlin
@@ -24,7 +24,8 @@ import shutil
 
 # things to add
 # linking libs to the built .jar file 
-# output .jar file command              DONE
+# add archive command 
+# add classes for the build object 
 
 # this is how the command would look 
 # with the output command you do not include the .jar extension 
@@ -49,6 +50,7 @@ def check_jar(args):
     except IndexError:
         print_update("no output .jar name specified using default name 'build.jar'",4)
         output_jar_name = "build.jar"
+#---------------------       END OF METHOD        ------------------------------------
 
 def main(argv):        
     try:
@@ -65,7 +67,6 @@ def main(argv):
             run_build()
     except IndexError:
         print_update("No valid flags",2)
-
 #---------------------       END OF METHOD        ------------------------------------
 
 
@@ -103,6 +104,7 @@ def build(build_language):
     # check the number of files to build is not 0, print error message if it is
     if len(files_to_build) == 0:
         print_update("There are no kotlin files to build",2)
+        os.system("cd ./..") # exit the src directory
     else:
         generate_compile_command(files_to_build)
 
@@ -170,7 +172,7 @@ def help():
     --help          run this flag by itself to get access to this menu 
     --archive       create a copy of the src/ directory and zip it up stores it in another directory called archive/
     --clean         cleans the build in the build directory 
-    --create        creates a project structure that is a build and src directory and a readme.md
+    --create        creates a project structure that is a build, src and archive directory and a readme.md
 
     OUTPUT FLAGS
     --output=       define the name of the output jar file, if this option is not specified  
@@ -199,16 +201,20 @@ def clean():
             jar_to_clean = current
             break
 
-    print("jar to clean ", jar_to_clean)
+    print_update("Build to clean: {0}".format(jar_to_clean),6)
     os.system("rm "+jar_to_clean)
     print_update("build was cleaned, removed {0}".format(jar_to_clean),6)
     os.system("cd ./..") # shift back up 
     
-# create a couple of directories for the 
+# create a couple of directories for the build script 
+# this create assumes you are in an emoty directory with no other folders of these names 
 def create():
     os.mkdir('build')
     os.mkdir('src')
     os.mkdir('archive')
+    f = open("README.md",'w+') # create a file called README.md if it exists clear the file if it doesnt create a new file
+    f.write("**Write about your project here**")
+    f.close()
     
 
 # run the build that is stored in the build directory 
