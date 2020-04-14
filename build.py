@@ -72,16 +72,17 @@ def main(argv):
 # build the chosen language, at the moment we only support kotlin 
 # in the future this shoud hopefully expand to more language 
 def build(build_language):
+    clean()
     os.chdir(current_path + "/src/")
     all_files = os.listdir()
     files_to_build = []
     #os.chdir(current_path + "/src/") # cd into the src directory 
     print_update("Building all kotlin files",5)
-    print("current directory : ",os.getcwd())
+   # print("current directory : ",os.getcwd())
     # check if the language specified is kotlin 
     if build_language != "--kotlin":
         print("at the moment we can only compile kotlin source files, sorry")
-        os.system("cd ./..")
+        os.chdir(current_path)
         return None
     
     
@@ -95,14 +96,14 @@ def build(build_language):
 
 
     current = ""
-    print(all_files)
-    print("current directory : ",os.getcwd())
+   # print(all_files)
+   # print("current directory : ",os.getcwd())
     for i in range(len(all_files)):
         current = all_files[i]
 
         if current[-3:] == ".kt": # check that the last 3 characters of the files is '.kt' if so add 
                                 # it to the array of files to build in generate_compile_command()
-            print(current)
+          #  print(current)
             files_to_build.append(current)
 
     # check the number of files to build is not 0, print error message if it is
@@ -128,11 +129,14 @@ def generate_compile_command(all_file_names):
         compile_command = compile_command + all_file_names[i] + " "
 
     final = compile_command + final_section
-    print("generated compile command: ",final)
+    #print("generated compile command: ",final)
     os.system(final)
-    # shift the generated .jar to the build directory 
-    shutil.move(current_path + "/src/"+output_jar_name,current_path+"/build/")
-    os.chdir(current_path) # shift back up to the main directory 
+    # shift the generated .jar to the build directory
+    try:
+        shutil.move(current_path + "/src/"+output_jar_name,current_path+"/build/")
+        os.chdir(current_path) # shift back up to the main directory 
+    except FileNotFoundError:
+        print_update("Build failed",2)
     
 #---------------------       END OF METHOD        ------------------------------------
 
@@ -202,11 +206,14 @@ def clean():
         if current[-4:] == ".jar":
             jar_to_clean = current
             break
-
-    print_update("Build to clean, {0}".format(jar_to_clean),6)
-    os.remove(jar_to_clean)
-    print_update("build was cleaned, removed {0}".format(jar_to_clean),6)
-    os.chdir(current_path) # shift back up 
+    try:
+        print_update("Cleaning build directroy",6)
+        os.remove(jar_to_clean)
+        print_update("Cleaned",6)
+        os.chdir(current_path) # shift back up 
+    except FileNotFoundError:
+        print_update("no .jar to clean",4)
+        os.chdir(current_path)
     
 # create a couple of directories for the build script 
 # this create assumes you are in an emoty directory with no other folders of these names 
