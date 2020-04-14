@@ -31,9 +31,6 @@ import shutil
 # with the output command you do not include the .jar extension 
 # example: artemis --build --kotlin --output=menu
 
-
-files_compiled  = 0
-libs_compiled   = 0
 current_path    = os.getcwd() # get the current working directory you are running the script from 
 output_jar_name = ""
 
@@ -75,7 +72,6 @@ def main(argv):
 # build the chosen language, at the moment we only support kotlin 
 # in the future this shoud hopefully expand to more language 
 def build(build_language):
-
     os.chdir(current_path + "/src/")
     all_files = os.listdir()
     files_to_build = []
@@ -196,17 +192,18 @@ def help():
 
 # clean the build directory 
 def clean():
+    os.chdir(current_path + "/build/")
     files = os.listdir()
     jar_to_clean = ""
     current = ""
-    os.chdir(current_path + "/build/") # this will move the current execution path to the build directory 
+     # this will move the current execution path to the build directory 
     for i in range(len(files)):
         current = files[i]
         if current[-4:] == ".jar":
             jar_to_clean = current
             break
 
-    print_update("Build to clean: {0}".format(jar_to_clean),6)
+    print_update("Build to clean, {0}".format(jar_to_clean),6)
     os.remove(jar_to_clean)
     print_update("build was cleaned, removed {0}".format(jar_to_clean),6)
     os.chdir(current_path) # shift back up 
