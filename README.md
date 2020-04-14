@@ -10,4 +10,4 @@ This script will soon have support for other languages when i get around to addi
 * Nim
 
 This script came about because I found maven,gradle and ant to be to compilcated for what they were doing 
-
+the archive flag currently does not exist, this will be implemented soon
