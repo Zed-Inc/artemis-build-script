@@ -82,31 +82,32 @@ def build(build_language):
     # check if the language specified is kotlin 
     if build_language != "--kotlin":
         print("at the moment we can only compile kotlin source files, sorry")
-
-    
-    # process for building the files 
-    # go through the src/ and get a copy of every .kt file in there also check
-    # all sub directories in there as well
-    # generate a kotlin command with all the correct flags and run it in the terminal 
-    # the kotlin compiler will then build a .jar file and put it into the build/ directory 
-    # the script is done 
-    # maybe add some funky visuals into it for a bit of fun 
-
-
-    current = ""
-    for i in range(len(all_files)):
-        current = all_files[i]
-
-        if current[-3:] == ".kt": # check that the last 3 characters of the files is '.kt' if so add 
-                                  # it to the array of files to build in generate_compile_command()
-            files_to_build.append(current)
-
-    # check the number of files to build is not 0, print error message if it is
-    if len(files_to_build) == 0:
-        print_update("There are no kotlin files to build",2)
-        os.system("cd ./..") # exit the src directory
+        os.system("cd ./..")
     else:
-        generate_compile_command(files_to_build)
+    
+        # process for building the files 
+        # go through the src/ and get a copy of every .kt file in there also check
+        # all sub directories in there as well
+        # generate a kotlin command with all the correct flags and run it in the terminal 
+        # the kotlin compiler will then build a .jar file and put it into the build/ directory 
+        # the script is done 
+        # maybe add some funky visuals into it for a bit of fun 
+
+
+        current = ""
+        for i in range(len(all_files)):
+            current = all_files[i]
+
+            if current[-3:] == ".kt": # check that the last 3 characters of the files is '.kt' if so add 
+                                    # it to the array of files to build in generate_compile_command()
+                files_to_build.append(current)
+
+        # check the number of files to build is not 0, print error message if it is
+        if len(files_to_build) == 0:
+            print_update("There are no kotlin files to build",2)
+            os.system("cd ./..") # exit the src directory
+        else:
+            generate_compile_command(files_to_build)
 
 #---------------------       END OF METHOD        ------------------------------------
 
@@ -131,8 +132,6 @@ def generate_compile_command(all_file_names):
     shutil.move(current_path + "/"+output_jar_name,current_path+"/build/")
     os.system("cd ./..") # shift back up to the main directory 
     
-
-
 #---------------------       END OF METHOD        ------------------------------------
 
 
