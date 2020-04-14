@@ -1,5 +1,8 @@
+#!/usr/local/bin/python3
 import os 
 import sys
+import shutil 
+
 
 # The goal of this build script is to create a simple process to
 # build files for a language at the moment this language is kotlin
@@ -10,6 +13,7 @@ import sys
 #                   and create a .jar file in a new/pre-existing directory called build 
 # --archive         this will create a zip file of the src directory 
 # --clean           this will delete the build directory and all contents inside of it 
+# --run             this will run the jar file stored in build/
 #
 #        languages supported 
 # --kotlin          builds the src directory for kotlin using the kotlin compiler
@@ -20,15 +24,13 @@ import sys
 
 # things to add
 # linking libs to the built .jar file 
-# output .jar file command              DONE
+# add archive command 
+# add classes for the build object this will store the language, output name, and the current working path 
 
 # this is how the command would look 
 # with the output command you do not include the .jar extension 
 # example: artemis --build --kotlin --output=menu
 
-
-files_compiled  = 0
-libs_compiled   = 0
 current_path    = os.getcwd() # get the current working directory you are running the script from 
 output_jar_name = ""
 
@@ -45,18 +47,23 @@ def check_jar(args):
     except IndexError:
         print_update("no output .jar name specified using default name 'build.jar'",4)
         output_jar_name = "build.jar"
+#---------------------       END OF METHOD        ------------------------------------
 
 def main(argv):        
     try:
         if argv[0] == "--build":
-            check_jar(argv)
-            build(argv[1])
+            check_jar(argv) # check if there was an output name specified 
+            build(argv[1]) # pass in the language specified 
         elif argv[0] == "--help": # check for help 
             help()
-
+        elif argv[0] == "--clean": # call the clean function 
+            clean()
+        elif argv[0] == "--create": # create a project structure 
+            create()
+        elif argv[0] == "--run":
+            run_build()
     except IndexError:
         print_update("No valid flags",2)
-
 #---------------------       END OF METHOD        ------------------------------------
 
 
@@ -65,13 +72,18 @@ def main(argv):
 # build the chosen language, at the moment we only support kotlin 
 # in the future this shoud hopefully expand to more language 
 def build(build_language):
+    os.chdir(current_path + "/src/")
     all_files = os.listdir()
     files_to_build = []
+    #os.chdir(current_path + "/src/") # cd into the src directory 
     print_update("Building all kotlin files",5)
+    print("current directory : ",os.getcwd())
     # check if the language specified is kotlin 
     if build_language != "--kotlin":
         print("at the moment we can only compile kotlin source files, sorry")
-
+        os.system("cd ./..")
+        return None
+    
     
     # process for building the files 
     # go through the src/ and get a copy of every .kt file in there also check
@@ -83,40 +95,45 @@ def build(build_language):
 
 
     current = ""
+    print(all_files)
+    print("current directory : ",os.getcwd())
     for i in range(len(all_files)):
         current = all_files[i]
 
         if current[-3:] == ".kt": # check that the last 3 characters of the files is '.kt' if so add 
-                                  # it to the array of files to build in generate_compile_command()
+                                # it to the array of files to build in generate_compile_command()
+            print(current)
             files_to_build.append(current)
 
     # check the number of files to build is not 0, print error message if it is
     if len(files_to_build) == 0:
         print_update("There are no kotlin files to build",2)
+       # os.system("cd ./..") # exit the src directory
     else:
         generate_compile_command(files_to_build)
+
 #---------------------       END OF METHOD        ------------------------------------
 
 
 
 
 def generate_compile_command(all_file_names):
-    global files_compiled
     compile_command = "kotlinc " # the default compile command
     final_section = "-include-runtime -d " + output_jar_name
     final = ""
     # llop through all the file names and append the file to the end 
     # of the compile command string
     for i in range(len(all_file_names)):
-        print(print_update(str(all_file_names[i]),1))
+        print_update(str(all_file_names[i]),1)
         compile_command = compile_command + all_file_names[i] + " "
-        files_compiled += 1
 
     final = compile_command + final_section
     print("generated compile command: ",final)
     os.system(final)
-
-
+    # shift the generated .jar to the build directory 
+    shutil.move(current_path + "/src/"+output_jar_name,current_path+"/build/")
+    os.chdir(current_path) # shift back up to the main directory 
+    
 #---------------------       END OF METHOD        ------------------------------------
 
 
@@ -132,6 +149,8 @@ def print_update(prompt, update_type):
         print("[INFO]     :     ",prompt) # print info about the compile 
     elif update_type == 5:
         print("[BUILD]    :     ",prompt)
+    elif update_type == 6:
+        print("[CLEAN]    :     ",prompt)
 #---------------------       END OF METHOD        ------------------------------------
 
 
@@ -146,14 +165,15 @@ def help():
                                                     
                                                     
     USAGE
-    artemis {FLAGS} {LANGUAGE} {OUTPUT}
+    artemis [FLAG] [LANGUAGE] [OUTPUT]
     artemis --build --kotlin --output=menu
 
     FLAGS
     --build         use this flag to build the src/ directory 
     --help          run this flag by itself to get access to this menu 
     --archive       create a copy of the src/ directory and zip it up stores it in another directory called archive/
-    --clean         delete the build directory 
+    --clean         cleans the build in the build directory 
+    --create        creates a project structure that is a build, src and archive directory and a readme.md
 
     OUTPUT FLAGS
     --output=       define the name of the output jar file, if this option is not specified  
@@ -170,6 +190,50 @@ def help():
     print(help_words)
 
 
+# clean the build directory 
+def clean():
+    os.chdir(current_path + "/build/")
+    files = os.listdir()
+    jar_to_clean = ""
+    current = ""
+     # this will move the current execution path to the build directory 
+    for i in range(len(files)):
+        current = files[i]
+        if current[-4:] == ".jar":
+            jar_to_clean = current
+            break
+
+    print_update("Build to clean, {0}".format(jar_to_clean),6)
+    os.remove(jar_to_clean)
+    print_update("build was cleaned, removed {0}".format(jar_to_clean),6)
+    os.chdir(current_path) # shift back up 
+    
+# create a couple of directories for the build script 
+# this create assumes you are in an emoty directory with no other folders of these names 
+def create():
+    os.mkdir('build')
+    os.mkdir('src')
+    os.mkdir('archive')
+    f = open("README.md",'w+') # create a file called README.md if it exists clear the file if it doesnt create a new file
+    f.write("**Write about your project here**")
+    f.close()
+    
+
+# run the build that is stored in the build directory 
+def run_build():
+    os.chdir(current_path + "/build/")
+    files = os.listdir()
+    current = ""
+    for i in range(len(files)):
+        current = files[i]
+        if current[-4:] == ".jar":
+            jar_to_run = current
+            break
+    os.system("java -jar {0}".format(jar_to_run))
+    os.chdir(current_path) # go back up to the main level 
+    
+
+    
 
 # enter the main method 
 if __name__ == "__main__":
