@@ -25,7 +25,7 @@ import shutil
 # things to add
 # linking libs to the built .jar file 
 # add archive command 
-# add classes for the build object 
+# add classes for the build object this will store the language, output name, and the current working path 
 
 # this is how the command would look 
 # with the output command you do not include the .jar extension 
