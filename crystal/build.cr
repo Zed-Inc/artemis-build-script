@@ -5,7 +5,7 @@ require "option_parser"
 # variable would be equal to the main file where the entery point of the
 # program is
 flagOptions = ["",""]
-
+version = 1.0
 compilerTypes = {kotlin: "kotlinc", c: "gcc", java: "javac", crystal: "crystal", python: "python"}
 
 
@@ -13,7 +13,7 @@ OptionParser.parse do |parser|
   parser.banner = "A universal build script for many languages"
 
 
-  parser.on "--build","-b", "build the program" do
+  parser.on "--build","-b", "build the program, automatically stores the executable in a 'build/' " do
     flagOptions[0] = "build"
     exit
   end
@@ -33,6 +33,9 @@ OptionParser.parse do |parser|
     puts parser
     exit
   end
+
+  parser.on "-v", "--version" do 
+    puts "Current build script version: #{version}"
 
   parser.invalid_option do |flag|
     update(1,"The flag #{flag} is an invalid option, if you need help use '-h'")
