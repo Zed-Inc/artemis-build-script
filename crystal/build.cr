@@ -8,9 +8,9 @@ require "./functions"
 flagOptions = [" "," "]
 version = 1.0
 # store the currently supported compilers and their extension types into these 2 tuples 
-compilerTypes =           {kotlin: "kotlinc", c: "gcc", java: "javac", crystal: "crystal", python: "python"}
-compilerFileExtensions = {kotlin: ".kt", c: ".c", java: ".java", crystal: ".cr", python: ".py"} 
-
+compilerTypes =          {kotlin: "kotlinc", c: "gcc", java: "javac", python: "python"}
+compilerFileExtensions = {kotlin: ".kt", c: ".c", java: ".java",  python: ".py"} 
+validLanguages =         ["kotlin",     "c",      "java",        "python"]
 
 OptionParser.parse do |parser|
   parser.banner = "A universal build script for many languages"
@@ -29,18 +29,18 @@ OptionParser.parse do |parser|
   parser.on("--init=PROJNAME", "initalizes a project structure sutiable for this build script"){ |projname| initProject(projname); exit }
 
 
-# check for language flag 
+  # check for language flag 
   parser.on("--language=LANG", "specify the language you want to build"){ |lang| flagOptions[1] = lang }
 
 
-# when the user enters --help or -h it will show the banner and
-# then some information about each command
+  # when the user enters --help or -h it will show the banner and
+  # then some information about each command
   parser.on "--help","-h","Shows you the way" do
     puts parser
     exit
   end
 
-  parser.on "-v", "--version" do 
+  parser.on "-v", "--version", "displays the current build version" do 
     puts "Current build script version: #{version}"
   end 
 
@@ -64,11 +64,18 @@ if options[:language] == " "
 end
 
 # checks if the specified language is valid if not exit the program 
-if options[:language] != compilerTypes
-  update(1,"The language you specified could not be parsed\n\t  Either it was misspelled or it is not currently supported\n\t  Please double check the command")
+valid = false
+validLanguages.each do |lang|
+  if lang == options[:language]
+    valid = true
+  end
+end
+
+if valid == false
+  update(1,"The language you specified could not be parsed\n\t  Either it was misspelled or it is not currently supported\n\t  Please double check what you typed")
   exit
 end
 
+compileCommand = compilerTypes[options[:language]]
 
-
-
+puts compileCommand

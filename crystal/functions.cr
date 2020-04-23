@@ -22,3 +22,9 @@ def update(updateType, update)
     puts "[INFO]    #{update}"
   end
 end
+
+
+def getFiles() 
+  files = ""
+  return files
+end
