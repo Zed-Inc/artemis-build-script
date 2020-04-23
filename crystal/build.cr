@@ -15,8 +15,15 @@ Option_parser.parse do |parser|
     exit
   end
 
-  parser.on "--language","-l", "specify the language you want to build" do
-    
+  parser.on "--run","-r","run the executable in the 'build/' directory" do
+    options[:command] = "run"
+    exit
+  end
+
+# check for language
+  parser.on "--language=LANG","-l=LANG", "specify the language you want to build" do
+    |lang| options[:language] = lang
+    exit
   end
 
 # when the user enters --help or -h it will show the banner and
@@ -26,4 +33,16 @@ Option_parser.parse do |parser|
     exit
   end
 
+  parser.invalid_option do |flag|
+    update(1,"The flag #{flag} is an invalid option, if you need help use '-h'")
+    exit(1)
+  end
+
+end
+
+# basic update functionality, makes the strings a bit cleaner and uniform
+def update(updateType, update)
+  if updateType == 1
+    puts "[ERROR]   #{update}"
+  end
 end
