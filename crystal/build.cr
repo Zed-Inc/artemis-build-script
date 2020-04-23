@@ -4,25 +4,27 @@ require "option_parser"
 # if the language is one like crystal, ruby, python then the files
 # variable would be equal to the main file where the entery point of the
 # program is
-options = Tuple(String,String,String)
-options = [language: " ", command: " ", files: " "]
+flagOptions = ["",""]
+
+compilerTypes = {kotlin: "kotlinc", c: "gcc", java: "javac", crystal: "crystal", python: "python"}
+
 
 OptionParser.parse do |parser|
   parser.banner = "A universal build script for many languages"
 
 
-  parser.on "--build","-b", "buld the program"do
-    options.command = "build"
+  parser.on "--build","-b", "build the program" do
+    flagOptions[0] = "build"
     exit
   end
 
   parser.on "--run","-r","run the executable in the 'build/' directory" do
-    options[:command] = "run"
+    flagOptions[0] = "run"
     exit
   end
 
 # check for language
-  parser.on("--language=LANG","-l=LANG", "specify the language you want to build"){ |lang| options[:language] = lang }
+  parser.on("--language=LANG","-l=LANG", "specify the language you want to build"){ |lang| flagOptions[1] = lang }
 
 
 # when the user enters --help or -h it will show the banner and
@@ -49,5 +51,7 @@ def update(updateType, update)
   end
 end
 
+# create a tuple from the array with all the flag commands in it
+options = NamedTuple(command: String, language: String).from({"command" => "#{flagOptions[0]}", "language" => "#{flagOptions[1]}"})
 
-update(2,"Building all #{options[:langauge]} files")
+update(2,"Building all #{options[:language]} files")
