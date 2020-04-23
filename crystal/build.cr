@@ -15,16 +15,16 @@ OptionParser.parse do |parser|
 
   parser.on "--build","-b", "build the program, automatically stores the executable in a 'build/' " do
     flagOptions[0] = "build"
-    exit
+    
   end
 
   parser.on "--run","-r","run the executable in the 'build/' directory" do
     flagOptions[0] = "run"
-    exit
+    
   end
 
 # check for language
-  parser.on("--language=LANG","-l=LANG", "specify the language you want to build"){ |lang| flagOptions[1] = lang }
+  parser.on("--language=LANG", "specify the language you want to build"){ |lang| flagOptions[1] = lang }
 
 
 # when the user enters --help or -h it will show the banner and
@@ -36,7 +36,7 @@ OptionParser.parse do |parser|
 
   parser.on "-v", "--version" do 
     puts "Current build script version: #{version}"
-
+  end 
   parser.invalid_option do |flag|
     update(1,"The flag #{flag} is an invalid option, if you need help use '-h'")
     exit(1)
