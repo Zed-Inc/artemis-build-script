@@ -4,10 +4,12 @@ require "option_parser"
 # if the language is one like crystal, ruby, python then the files
 # variable would be equal to the main file where the entery point of the
 # program is
-flagOptions = ["",""]
+flagOptions = [" "," "]
 version = 1.0
-compilerTypes = {kotlin: "kotlinc", c: "gcc", java: "javac", crystal: "crystal", python: "python"}
-
+# store the currently supported compilers and their extension types into these 2 tuples 
+compilerTypes =           {kotlin: "kotlinc", c: "gcc", java: "javac", crystal: "crystal", python: "python"}
+compilerFileExtensionss = {kotlin: ".kt", c: ".c", java: ".java", crystal: ".cr", python: ".py"} 
+currentDirectory = Dir.current # get the current working directory 
 
 OptionParser.parse do |parser|
   parser.banner = "A universal build script for many languages"
@@ -23,7 +25,7 @@ OptionParser.parse do |parser|
     
   end
 
-# check for language
+# check for language flag 
   parser.on("--language=LANG", "specify the language you want to build"){ |lang| flagOptions[1] = lang }
 
 
@@ -57,4 +59,33 @@ end
 # create a tuple from the array with all the flag commands in it
 options = NamedTuple(command: String, language: String).from({"command" => "#{flagOptions[0]}", "language" => "#{flagOptions[1]}"})
 
-update(2,"Building all #{options[:language]} files")
+# make a new line, it's a bit nicer 
+puts ""
+# if there was no language specified, print error and quit execution 
+if options[:language] == " " 
+  update(1,"There was no build language specified")
+  exit
+end
+
+# checks if the specified language is valid if not exit the program 
+if options[:language] != compilerTypes
+  update(1,"The language you specified could not be parsed\n\t  Either it was misspelled or it is not currently supported\n\t  Please double check the command")
+  exit
+end
+
+# pass in the named tuples to the function
+compileLine = runCommand(**options)
+
+# returns a string with the correct compile type 
+
+# find the correct compile type from the tuples 
+# concatnate that to the string 
+# search the directory for files ending in the type name 
+#
+def runCommand(commands)
+  compileFor = commands.fetch(:language,"Unknown") # get us the language we want to use for the build 
+  compile = "#{compilerTypes[compileFor]} "
+  
+
+  return compile
+end
