@@ -1,5 +1,5 @@
 require "option_parser"
-
+require "Dir"
 
 # if the language is one like crystal, ruby, python then the files
 # variable would be equal to the main file where the entery point of the
@@ -9,7 +9,7 @@ version = 1.0
 # store the currently supported compilers and their extension types into these 2 tuples 
 compilerTypes =           {kotlin: "kotlinc", c: "gcc", java: "javac", crystal: "crystal", python: "python"}
 compilerFileExtensionss = {kotlin: ".kt", c: ".c", java: ".java", crystal: ".cr", python: ".py"} 
-currentDirectory = Dir.current # get the current working directory 
+
 
 OptionParser.parse do |parser|
   parser.banner = "A universal build script for many languages"
@@ -25,6 +25,9 @@ OptionParser.parse do |parser|
     
   end
 
+  parser.on("--init=PROJNAME", "initalizes a project structure sutiable for this build script"){ |projname| initProject(projname); exit }
+
+
 # check for language flag 
   parser.on("--language=LANG", "specify the language you want to build"){ |lang| flagOptions[1] = lang }
 
@@ -39,11 +42,12 @@ OptionParser.parse do |parser|
   parser.on "-v", "--version" do 
     puts "Current build script version: #{version}"
   end 
+
+
   parser.invalid_option do |flag|
     update(1,"The flag #{flag} is an invalid option, if you need help use '-h'")
     exit(1)
   end
-
 end
 
 # basic update functionality, makes the strings a bit cleaner and uniform
@@ -88,4 +92,24 @@ def runCommand(commands)
   
 
   return compile
+end
+
+
+
+
+def initProject(projectName)
+  currentDirectory = Dir.current # get the current working directory 
+  newPath = currentDirectory + "/#{projectName}" # generate the new path name 
+  dir = Dir.new(currentDirectory) # create a new Dir object
+  dir.mkdir(newPath)
+  dir.cd(newPath) # cd into the newly created directory 
+  # create 3 new directories for the project
+  dir.mkdir("build")
+  update(1,"creating 'build' directory")
+  dir.mkdir("src")
+  update(1,"creating 'src' directory ")
+  dir.mkdir("archive")
+  update(1,"creating 'archive' directory")
+
+
 end
