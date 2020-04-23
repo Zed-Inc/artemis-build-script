@@ -1,5 +1,6 @@
 require "option_parser"
 require "Dir"
+require "./functions"
 
 # if the language is one like crystal, ruby, python then the files
 # variable would be equal to the main file where the entery point of the
@@ -8,7 +9,7 @@ flagOptions = [" "," "]
 version = 1.0
 # store the currently supported compilers and their extension types into these 2 tuples 
 compilerTypes =           {kotlin: "kotlinc", c: "gcc", java: "javac", crystal: "crystal", python: "python"}
-compilerFileExtensionss = {kotlin: ".kt", c: ".c", java: ".java", crystal: ".cr", python: ".py"} 
+compilerFileExtensions = {kotlin: ".kt", c: ".c", java: ".java", crystal: ".cr", python: ".py"} 
 
 
 OptionParser.parse do |parser|
@@ -50,15 +51,6 @@ OptionParser.parse do |parser|
   end
 end
 
-# basic update functionality, makes the strings a bit cleaner and uniform
-def update(updateType, update)
-  if updateType == 1
-    puts "[ERROR]   #{update}"
-  end
-  if updateType == 2
-    puts "[INFO]    #{update}"
-  end
-end
 
 # create a tuple from the array with all the flag commands in it
 options = NamedTuple(command: String, language: String).from({"command" => "#{flagOptions[0]}", "language" => "#{flagOptions[1]}"})
@@ -77,39 +69,6 @@ if options[:language] != compilerTypes
   exit
 end
 
-# pass in the named tuples to the function
-compileLine = runCommand(**options)
-
-# returns a string with the correct compile type 
-
-# find the correct compile type from the tuples 
-# concatnate that to the string 
-# search the directory for files ending in the type name 
-#
-def runCommand(commands)
-  compileFor = commands.fetch(:language,"Unknown") # get us the language we want to use for the build 
-  compile = "#{compilerTypes[compileFor]} "
-  
-
-  return compile
-end
 
 
 
-
-def initProject(projectName)
-  currentDirectory = Dir.current # get the current working directory 
-  newPath = currentDirectory + "/#{projectName}" # generate the new path name 
-  dir = Dir.new(currentDirectory) # create a new Dir object
-  dir.mkdir(newPath)
-  dir.cd(newPath) # cd into the newly created directory 
-  # create 3 new directories for the project
-  dir.mkdir("build")
-  update(1,"creating 'build' directory")
-  dir.mkdir("src")
-  update(1,"creating 'src' directory ")
-  dir.mkdir("archive")
-  update(1,"creating 'archive' directory")
-
-
-end
