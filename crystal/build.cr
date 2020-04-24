@@ -8,10 +8,10 @@ require "./functions"
 flagOptions = [" "," "]
 version = 1.0
 # store the currently supported compilers and their extension types into these 2 tuples 
-compilerTypes =          {kotlin: "kotlinc", c: "gcc", java: "javac", python: "python"}
-compilerFileExtensions = {kotlin: ".kt", c: ".c", java: ".java",  python: ".py"} 
-validLanguages =         ["kotlin",     "c",      "java",        "python"]
-
+compilerTypes =          {kotlin: "kotlinc", c: "gcc",      java: "javac"}
+compilerFileExtensions = {kotlin: ".kt",     c: ".c",       java: ".java"} 
+validLanguages =         ["kotlin",         "c",           "java"        ]
+currentPath = Dir.current
 OptionParser.parse do |parser|
   parser.banner = "A universal build script for many languages"
 
@@ -51,12 +51,13 @@ OptionParser.parse do |parser|
   end
 end
 
-
+fancyLoadingBar
 # create a tuple from the array with all the flag commands in it
 options = NamedTuple(command: String, language: String).from({"command" => "#{flagOptions[0]}", "language" => "#{flagOptions[1]}"})
 
 # make a new line, it's a bit nicer 
 puts ""
+
 # if there was no language specified, print error and quit execution 
 if options[:language] == " " 
   update(1,"There was no build language specified")
@@ -76,6 +77,17 @@ if valid == false
   exit
 end
 
-compileCommand = compilerTypes[options[:language]]
+# compileCommand = compilerTypes[options[:language]]
+files = getFiles(compilerFileExtensions[options[:language]], currentPath)
+# handle if the function returns nil 
+if files.size == 0
+  update(1,"There were no files of type: #{compilerFileExtensions[options[:language]]} for language #{options[:language]}")
+  exit 
+end 
 
-puts compileCommand
+filesToCompile = ""
+files.each do |file|
+  filesToCompile += file
+end 
+
+puts "#{compilerTypes[options[:language]]} #{filesToCompile}"

@@ -1,3 +1,5 @@
+require "colorize"
+
 # initalize project structure that is suitable for the script 
 def initProject(projectName)
   currentDirectory = Dir.current # get the current working directory 
@@ -23,8 +25,25 @@ def update(updateType, update)
   end
 end
 
-
-def getFiles() 
-  files = ""
+# gets all the files needed and returns the array
+def getFiles(filetype, path)
+ # puts "Searching on #{path} for all #{filetype} files types"
+  files = Dir.[]("*#{filetype}")
   return files
+end
+
+
+def fancyLoadingBar()
+  currPos = 11
+  puts "fancy bar"
+  # \033[L;CH
+  # move cursor to coloumn C line L
+  puts "\033[15;10H {"
+  puts "\033[15;22H }"
+  while currPos <= 21
+    puts "\033[15;#{currPos}H•"
+    currPos += 1
+    sleep 0.5
+  end
+  puts "\033[16;0H end of loop, pos value #{currPos}"
 end
