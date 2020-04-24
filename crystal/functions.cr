@@ -35,15 +35,17 @@ end
 
 def fancyLoadingBar()
   currPos = 11
+  puts "\033[2J" # clear the screen and move the cursor to 0,0
   puts "fancy bar"
   # \033[L;CH
   # move cursor to coloumn C line L
-  puts "\033[15;10H {"
-  puts "\033[15;22H }"
-  while currPos <= 21
-    puts "\033[15;#{currPos}H•"
+  puts "\033[5;9H {"
+  puts "\033[5;23H }"
+  puts "\033[5;#{currPos}H•"
+  while currPos <= 22
     currPos += 1
+    puts "\033[5;#{currPos}H•"
     sleep 0.5
   end
-  puts "\033[16;0H end of loop, pos value #{currPos}"
+  puts "\033[6;0H end of loop, pos value #{currPos}"
 end
